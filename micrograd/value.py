@@ -14,6 +14,7 @@ class Value:
         return f"Value(data={self.data})"
     
     def __add__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data + other.data, (self, other), '+')
 
         def _backward():
@@ -24,6 +25,7 @@ class Value:
         return out
     
     def __mul__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data * other.data, (self, other), '*')
 
         def _backward():
@@ -32,6 +34,9 @@ class Value:
         
         out._backward = _backward
         return out
+    
+    def __rmul__(self, other):
+        return self * other
     
     def tanh(self):
         x = self.data
@@ -59,3 +64,14 @@ class Value:
         self.grad = 1.0
         for node in reversed(topo):
             node._backward()
+    
+    def exp(self):
+        x = self.data
+        out = Value(math.exp(x), (self, ), 'exp')
+
+        def _backward():
+            self.grad += out.data * out.grad
+        
+        out._backward = _backward
+
+        return out
