@@ -1,3 +1,5 @@
+from micrograd.layer import Layer
+from micrograd.mlp import MLP
 from micrograd.neuron import Neuron
 from micrograd.value import Value
 from micrograd.visualize import draw_dot
@@ -27,6 +29,28 @@ from micrograd.visualize import draw_dot
 # dot = draw_dot(o)
 # dot.render("graph", view=True)
 
-x = [2.0, 3.0]
-n = Neuron(2)
-print(n(x))
+x = [2.0, 3.0, -1.0]
+n = MLP(3, [4, 4, 1])
+# print(n(x))
+
+xs = [
+    [2.0, 3.0, -1.0],
+    [3.0, -1.0, 0.5],
+    [0.5, 1.0, 1.0],
+    [1.0, 1.0, -1.0],
+]
+
+ys = [1.0, -1.0, -1.0, 1.0]
+
+ypred = [n(x) for x in xs]
+print("ypred")
+print(ypred)
+
+loss = sum((yout - ygt)**2 for ygt, yout in zip(ys, ypred))
+print("loss")
+print(loss)
+
+loss.backward()
+
+dot = draw_dot(loss)
+dot.render("graph", view=True)
