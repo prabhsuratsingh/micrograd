@@ -10,3 +10,6 @@ class Layer:
         outs = [n(x) for n in self.neurons]
 
         return outs[0] if len(outs) == 1 else outs
+    
+    def parameters(self):
+        return [p for neuron in self.neurons for p in neuron.parameters()]

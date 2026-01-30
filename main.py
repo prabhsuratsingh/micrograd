@@ -31,7 +31,7 @@ from micrograd.visualize import draw_dot
 
 x = [2.0, 3.0, -1.0]
 n = MLP(3, [4, 4, 1])
-# print(n(x))
+print(len(n.parameters()))
 
 xs = [
     [2.0, 3.0, -1.0],
@@ -42,15 +42,21 @@ xs = [
 
 ys = [1.0, -1.0, -1.0, 1.0]
 
-ypred = [n(x) for x in xs]
-print("ypred")
+for k in range(20):
+    ypred = [n(x) for x in xs]
+
+    loss = sum((yout - ygt)**2 for ygt, yout in zip(ys, ypred))
+
+    for p in n.parameters():
+        p.grad = 0.0
+    loss.backward()
+
+    for p in n.parameters():
+        p.data += -0.05 * p.grad
+
+    print(f"Step: {k} | Loss: {loss.data}")
+
+print("Prediction")
 print(ypred)
-
-loss = sum((yout - ygt)**2 for ygt, yout in zip(ys, ypred))
-print("loss")
-print(loss)
-
-loss.backward()
-
-dot = draw_dot(loss)
-dot.render("graph", view=True)
+# dot = draw_dot(loss)
+# dot.render("graph", view=True)

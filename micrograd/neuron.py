@@ -13,3 +13,5 @@ class Neuron:
 
         return out
     
+    def parameters(self):
+        return self.w + [self.b]
